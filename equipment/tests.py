@@ -1,3 +1,10 @@
 from django.test import TestCase
+from .models import Category
 
-# Create your tests here.
+
+class CategoryModelTest(TestCase):
+
+    def test_create_category(self):
+        category = Category.objects.create(name="Laptop")
+
+        self.assertEqual(category.name, "Laptop")
