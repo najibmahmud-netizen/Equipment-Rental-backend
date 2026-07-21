@@ -1,8 +1,16 @@
 from rest_framework import generics
-from rest_framework.permissions import IsAdminUser, AllowAny
+from rest_framework.permissions import (
+    IsAdminUser,
+    AllowAny,
+    IsAuthenticated,
+)
 
-from .models import Category, Equipment
-from .serializers import CategorySerializer, EquipmentSerializer
+from .models import Category, Equipment, Review
+from .serializers import (
+    CategorySerializer,
+    EquipmentSerializer,
+    ReviewSerializer,
+)
 
 
 class CategoryListView(generics.ListAPIView):
@@ -41,3 +49,20 @@ class EquipmentDetailView(generics.RetrieveUpdateDestroyAPIView):
         if self.request.method == "GET":
             return [AllowAny()]
         return [IsAdminUser()]
+
+
+class ReviewListCreateView(generics.ListCreateAPIView):
+    """
+    GET  -> List all reviews
+    POST -> Create a review
+    """
+    queryset = Review.objects.all()
+    serializer_class = ReviewSerializer
+
+    def get_permissions(self):
+        if self.request.method == "POST":
+            return [IsAuthenticated()]
+        return [AllowAny()]
+
+    def perform_create(self, serializer):
+        serializer.save(customer=self.request.user)
