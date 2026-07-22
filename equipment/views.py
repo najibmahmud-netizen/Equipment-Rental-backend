@@ -38,17 +38,18 @@ class EquipmentListCreateView(generics.ListCreateAPIView):
 
 class EquipmentDetailView(generics.RetrieveUpdateDestroyAPIView):
     """
-    GET    -> Equipment details
-    PUT    -> Update equipment
-    DELETE -> Delete equipment
+    GET     -> Equipment details
+    PUT     -> Update equipment
+    PATCH   -> Partial update
+    DELETE  -> Delete equipment
     """
     queryset = Equipment.objects.all()
     serializer_class = EquipmentSerializer
 
     def get_permissions(self):
-        if self.request.method == "GET":
-            return [AllowAny()]
-        return [IsAdminUser()]
+        if self.request.method in ["PUT", "PATCH", "DELETE"]:
+            return [IsAdminUser()]
+        return [AllowAny()]
 
 
 class ReviewListCreateView(generics.ListCreateAPIView):
