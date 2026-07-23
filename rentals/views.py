@@ -13,13 +13,15 @@ class RentalRequestListCreateView(generics.ListCreateAPIView):
     """
     Customers can:
     - View their own rental requests
-    - Create a new rental request
+    - Create a rental request
     """
     serializer_class = RentalRequestSerializer
     permission_classes = [permissions.IsAuthenticated]
 
     def get_queryset(self):
-        return RentalRequest.objects.filter(customer=self.request.user)
+        return RentalRequest.objects.filter(
+            customer=self.request.user
+        ).order_by("-request_date")
 
     def perform_create(self, serializer):
         serializer.save(customer=self.request.user)
@@ -27,21 +29,24 @@ class RentalRequestListCreateView(generics.ListCreateAPIView):
 
 class AllRentalRequestsView(generics.ListAPIView):
     """
-    Admin can view all rental requests.
+    Admin can view every rental request.
     """
-    queryset = RentalRequest.objects.all()
+    queryset = RentalRequest.objects.all().order_by("-request_date")
     serializer_class = RentalRequestSerializer
     permission_classes = [permissions.IsAdminUser]
 
 
 class ApproveRentalView(APIView):
-    """
-    Admin approves a rental request.
-    """
     permission_classes = [permissions.IsAdminUser]
 
     def patch(self, request, pk):
         rental = get_object_or_404(RentalRequest, pk=pk)
+
+        if rental.status != "Pending":
+            return Response(
+                {"error": "Only pending rentals can be approved."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         equipment = rental.equipment
 
@@ -56,43 +61,49 @@ class ApproveRentalView(APIView):
 
         equipment.quantity -= 1
 
-        if equipment.quantity == 0:
+        if equipment.quantity <= 0:
             equipment.available = False
 
         equipment.save()
 
         return Response(
             {"message": "Rental approved successfully."},
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )
 
 
 class RejectRentalView(APIView):
-    """
-    Admin rejects a rental request.
-    """
     permission_classes = [permissions.IsAdminUser]
 
     def patch(self, request, pk):
         rental = get_object_or_404(RentalRequest, pk=pk)
+
+        if rental.status != "Pending":
+            return Response(
+                {"error": "Only pending rentals can be rejected."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         rental.status = "Rejected"
         rental.save()
 
         return Response(
             {"message": "Rental rejected successfully."},
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )
 
 
 class ReturnRentalView(APIView):
-    """
-    Admin marks equipment as returned.
-    """
     permission_classes = [permissions.IsAdminUser]
 
     def patch(self, request, pk):
         rental = get_object_or_404(RentalRequest, pk=pk)
+
+        if rental.status != "Approved":
+            return Response(
+                {"error": "Only approved rentals can be returned."},
+                status=status.HTTP_400_BAD_REQUEST,
+            )
 
         rental.status = "Returned"
         rental.returned_at = timezone.now()
@@ -105,5 +116,5 @@ class ReturnRentalView(APIView):
 
         return Response(
             {"message": "Equipment returned successfully."},
-            status=status.HTTP_200_OK
+            status=status.HTTP_200_OK,
         )
