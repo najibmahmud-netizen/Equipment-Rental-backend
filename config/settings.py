@@ -3,9 +3,9 @@ from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# ==========================
+# ==========================================
 # SECURITY
-# ==========================
+# ==========================================
 
 SECRET_KEY = os.environ.get(
     "SECRET_KEY",
@@ -20,12 +20,13 @@ ALLOWED_HOSTS = os.environ.get(
 ).split(",")
 
 CSRF_TRUSTED_ORIGINS = [
+    "https://equipment-rental-frontend-bice.vercel.app",
     "https://*.onrender.com",
 ]
 
-# ==========================
+# ==========================================
 # APPLICATIONS
-# ==========================
+# ==========================================
 
 INSTALLED_APPS = [
     "django.contrib.admin",
@@ -47,9 +48,9 @@ INSTALLED_APPS = [
     "rentals",
 ]
 
-# ==========================
+# ==========================================
 # MIDDLEWARE
-# ==========================
+# ==========================================
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
@@ -65,9 +66,9 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = "config.urls"
 
-# ==========================
+# ==========================================
 # TEMPLATES
-# ==========================
+# ==========================================
 
 TEMPLATES = [
     {
@@ -86,9 +87,9 @@ TEMPLATES = [
 
 WSGI_APPLICATION = "config.wsgi.application"
 
-# ==========================
+# ==========================================
 # DATABASE
-# ==========================
+# ==========================================
 
 DATABASES = {
     "default": {
@@ -97,9 +98,9 @@ DATABASES = {
     }
 }
 
-# ==========================
+# ==========================================
 # PASSWORD VALIDATION
-# ==========================
+# ==========================================
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -116,9 +117,9 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
-# ==========================
+# ==========================================
 # INTERNATIONALIZATION
-# ==========================
+# ==========================================
 
 LANGUAGE_CODE = "en-us"
 
@@ -128,29 +129,29 @@ USE_I18N = True
 
 USE_TZ = True
 
-# ==========================
+# ==========================================
 # STATIC FILES
-# ==========================
+# ==========================================
 
 STATIC_URL = "static/"
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
-# ==========================
+# ==========================================
 # MEDIA FILES
-# ==========================
+# ==========================================
 
 MEDIA_URL = "/media/"
 MEDIA_ROOT = BASE_DIR / "media"
 
-# ==========================
+# ==========================================
 # DEFAULT PRIMARY KEY
-# ==========================
+# ==========================================
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
-# ==========================
+# ==========================================
 # DJANGO REST FRAMEWORK
-# ==========================
+# ==========================================
 
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": (
@@ -159,9 +160,9 @@ REST_FRAMEWORK = {
     "DEFAULT_SCHEMA_CLASS": "drf_spectacular.openapi.AutoSchema",
 }
 
-# ==========================
-# SWAGGER / OPENAPI
-# ==========================
+# ==========================================
+# SWAGGER
+# ==========================================
 
 SPECTACULAR_SETTINGS = {
     "TITLE": "Equipment Rental API",
@@ -169,13 +170,14 @@ SPECTACULAR_SETTINGS = {
     "VERSION": "1.0.0",
 }
 
-# ==========================
+# ==========================================
 # CORS
-# ==========================
+# ==========================================
 
 CORS_ALLOWED_ORIGINS = [
     "http://localhost:5173",
     "http://localhost:5174",
+    "https://equipment-rental-frontend-bice.vercel.app",
 ]
 
 CORS_ALLOW_CREDENTIALS = True
