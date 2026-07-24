@@ -1,0 +1,19 @@
+version: "3.9"
+
+services:
+  backend:
+    image: najibmahmud/equipment-backend:latest
+    container_name: equipment-backend
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./backend/db.sqlite3:/app/db.sqlite3
+      - ./backend/media:/app/media
+
+  frontend:
+    image: najibmahmud/equipment-frontend:latest
+    container_name: equipment-frontend
+    ports:
+      - "5173:5173"
+    depends_on:
+      - backend
